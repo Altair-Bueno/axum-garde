@@ -33,7 +33,7 @@ async fn main() {
         .route("/person", post(insert_valid_person))
         // Create the application state
         .with_state(());
-    println!("See example: http://127.0.0.1:8080/example");
+    println!("See example: http://127.0.0.1:8080/person");
     Server::bind(&([127, 0, 0, 1], 8080).into())
         .serve(app.into_make_service())
         .await
