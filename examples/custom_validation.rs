@@ -1,9 +1,9 @@
-//! Simple usage of using `axum_garde` for a REST API
+//! Showcases custom validators and garde contexts
 //!
 //! Run the example using
 //!
 //! ```sh
-//! cargo run --example json
+//! cargo run --example custom_validation
 //! ```
 use axum::{response::IntoResponse, routing::post, Json, Router, Server};
 use axum_garde::WithValidation;
