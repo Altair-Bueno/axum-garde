@@ -36,7 +36,7 @@ fn password_validation(value: &str, context: &PasswordContext) -> garde::Result 
 
 async fn custom_validation(
     // Perform validation on the request payload
-    WithValidation(_, _): WithValidation<Person, Json<Person>>,
+    WithValidation(_): WithValidation<Json<Person>>,
 ) -> impl IntoResponse {
     "Validation suceeed!"
 }
