@@ -3,9 +3,14 @@ use axum::response::Response;
 use garde::Errors;
 use thiserror::Error;
 
+/// Rejection used for [`WithValidation`]
+///
+/// [`WithValidation`]: crate::WithValidation
 #[derive(Debug, Error)]
 pub enum WithValidationRejection<T> {
+    /// Variant for the extractor's rejection
     ExtractionError(T),
+    /// Variant for the payload's validation errors
     ValidationError(#[from] Errors),
 }
 

@@ -14,6 +14,51 @@ use garde::Unvalidated;
 use garde::Valid;
 use garde::Validate;
 
+/// An extractor for validating payloads with garde
+///
+/// `WithValidation` wraps another extractor and validates it's payload. The
+/// `T` generic type must be an [`extractor`] that implements `IntoInner`,
+///  where `T::Inner: garde::Validate`. The validation context will be extracted
+/// from the router's state.
+///
+/// T is expected to implement [`FromRequest`] or [`FromRequestParts`], and
+/// [`IntoInner`]
+///
+/// The desired validation context ([`garde::Validate::Context`](garde::Validate))
+/// must be provided as router state
+///
+/// ### Example
+///
+/// ```
+/// use axum::Json;
+/// use serde::{Serialize,Deserialize};
+/// use garde::Validate;
+/// use axum_garde::WithValidation;
+///
+/// #[derive(Debug, Serialize, Deserialize, Validate)]
+/// struct Person {
+///     #[garde(length(min = 1, max = 10))]
+///     name: String
+/// }
+///
+/// async fn handler(
+///     WithValidation(valid_person): WithValidation<Json<Person>>,
+/// ) -> String{
+///     format!("{valid_person:?}")
+/// }
+///
+/// # // Assert that handler compiles
+/// # axum::Router::<_, axum::body::BoxBody>::new()
+/// #   .route("/", axum::routing::post(handler))
+/// #   .with_state(())
+/// #   .into_make_service();
+/// ```
+///
+/// [`FromRequestParts`]: axum::extract::FromRequestParts
+/// [`FromRequest`]: axum::extract::FromRequest
+/// [`IntoInner`]: crate::IntoInner
+/// [`Valid`]: garde::Valid
+/// [`extractor`]: axum::extract
 pub struct WithValidation<Extractor>(pub Valid<Extractor::Inner>)
 where
     Extractor: IntoInner;

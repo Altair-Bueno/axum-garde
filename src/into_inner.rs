@@ -1,7 +1,13 @@
 use axum::extract::*;
 
+/// Trait for unwrapping extractor's payloads
+///
+/// Types that extract data from request should implement this trait, as it
+/// unlocks extractor composition with third party crates
 pub trait IntoInner {
+    /// Wrapped payload type
     type Inner;
+    /// Consume the extractor and unwrap the payload
     fn into_inner(self) -> Self::Inner;
 }
 
