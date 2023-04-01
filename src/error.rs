@@ -1,3 +1,4 @@
+use axum::http::StatusCode;
 use axum::response::IntoResponse;
 use axum::response::Response;
 use garde::Errors;
@@ -10,7 +11,8 @@ use thiserror::Error;
 pub enum WithValidationRejection<T> {
     /// Variant for the extractor's rejection
     ExtractionError(T),
-    /// Variant for the payload's validation errors
+    /// Variant for the payload's validation errors. Responds with status code
+    /// `422 Unprocessable Content`
     ValidationError(#[from] Errors),
 }
 
@@ -18,7 +20,9 @@ impl<T: IntoResponse> IntoResponse for WithValidationRejection<T> {
     fn into_response(self) -> Response {
         match self {
             WithValidationRejection::ExtractionError(t) => t.into_response(),
-            WithValidationRejection::ValidationError(e) => format!("{e}").into_response(),
+            WithValidationRejection::ValidationError(e) => {
+                (StatusCode::UNPROCESSABLE_ENTITY, format!("{e}")).into_response()
+            }
         }
     }
 }
