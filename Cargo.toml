@@ -5,31 +5,32 @@ edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+[workspace.dependencies]
+garde = "0.9.1"
+axum = "0.6"
+thiserror = "1.0.40"
+
+# Dev dependencies
+serde = "1"
+tokio = "1.27.0"
+rstest = "0.17.0"
+speculoos = "0.11.0"
+
+
 [features]
 default = ["json", "query", "form"]
 json = ["axum/json"]
 query = ["axum/query"]
 form = ["axum/form"]
 
-[workspace.dependencies]
-garde = { version = "0.9.1", default-features = false }
-axum = { version = "0.6", default-features = false }
-serde = { version = "1", default-features = false }
-tokio = { version = "1.27.0" }
-
-thiserror = "1.0.40"
-
-rstest = "0.17.0"
-speculoos = "0.11.0"
-
 [dependencies]
-axum = { workspace = true }
-garde = { workspace = true }
+axum = { workspace = true, default-features = false }
+garde = { workspace = true, default-features = false }
 thiserror = { workspace = true }
 
 [dev-dependencies]
 serde = { workspace = true, features = ["derive"] }
-garde = { workspace = true, features = ["derive"] }
+garde = { workspace = true, features = ["default", "derive"] }
 axum = { workspace = true, features = ["default"] }
 tokio = { workspace = true, features = ["full"] }
 rstest = { workspace = true }
