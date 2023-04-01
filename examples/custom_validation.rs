@@ -34,20 +34,21 @@ fn password_validation(value: &str, context: &PasswordContext) -> garde::Result 
     Ok(())
 }
 
-async fn custom_validation(
+async fn insert_valid_person(
     // Perform validation on the request payload
-    WithValidation(_): WithValidation<Json<Person>>,
+    WithValidation(person): WithValidation<Json<Person>>,
 ) -> impl IntoResponse {
-    "Validation suceeed!"
+    println!("Inserted person on database: {person:?}");
+    Json(person.into_inner())
 }
 
 #[tokio::main]
 async fn main() {
     let app = Router::new()
-        .route("/check_password", post(custom_validation))
+        .route("/person", post(insert_valid_person))
         // Create the application state
         .with_state(PasswordContext { complexity: 10 });
-    println!("See example: http://127.0.0.1:8080/check_password");
+    println!("See example: http://127.0.0.1:8080/person");
     Server::bind(&([127, 0, 0, 1], 8080).into())
         .serve(app.into_make_service())
         .await
