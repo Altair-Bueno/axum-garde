@@ -13,20 +13,22 @@ use garde::Unvalidated;
 use garde::Valid;
 use garde::Validate;
 
-pub struct WithValidation<E: IntoInner>(pub Valid<<E as IntoInner>::Inner>);
+pub struct WithValidation<Extractor>(pub Valid<Extractor::Inner>)
+where
+    Extractor: IntoInner;
 
 #[async_trait]
-impl<S, E, Ctx> FromRequestParts<S> for WithValidation<E>
+impl<State, Extractor, Context> FromRequestParts<State> for WithValidation<Extractor>
 where
-    S: Send + Sync,
-    E: FromRequestParts<S> + IntoInner,
-    <E as IntoInner>::Inner: Validate<Context = Ctx>,
-    Ctx: FromRef<S>,
+    State: Send + Sync,
+    Extractor: FromRequestParts<State> + IntoInner,
+    Extractor::Inner: Validate<Context = Context>,
+    Context: FromRef<State>,
 {
-    type Rejection = WithValidationRejection<E::Rejection>;
+    type Rejection = WithValidationRejection<Extractor::Rejection>;
 
-    async fn from_request_parts(parts: &mut Parts, state: &S) -> Result<Self, Self::Rejection> {
-        let value = E::from_request_parts(parts, state)
+    async fn from_request_parts(parts: &mut Parts, state: &State) -> Result<Self, Self::Rejection> {
+        let value = Extractor::from_request_parts(parts, state)
             .await
             .map_err(WithValidationRejection::ExtractionError)?;
         let ctx = FromRef::from_ref(state);
@@ -39,18 +41,18 @@ where
 }
 
 #[async_trait]
-impl<S, B, E, Ctx> FromRequest<S, B> for WithValidation<E>
+impl<State, Body, Extractor, Context> FromRequest<State, Body> for WithValidation<Extractor>
 where
-    B: Send + 'static,
-    S: Send + Sync,
-    E: FromRequest<S, B> + IntoInner,
-    <E as IntoInner>::Inner: Validate<Context = Ctx>,
-    Ctx: FromRef<S>,
+    Body: Send + 'static,
+    State: Send + Sync,
+    Extractor: FromRequest<State, Body> + IntoInner,
+    Extractor::Inner: Validate<Context = Context>,
+    Context: FromRef<State>,
 {
-    type Rejection = WithValidationRejection<E::Rejection>;
+    type Rejection = WithValidationRejection<Extractor::Rejection>;
 
-    async fn from_request(req: Request<B>, state: &S) -> Result<Self, Self::Rejection> {
-        let value = E::from_request(req, state)
+    async fn from_request(req: Request<Body>, state: &State) -> Result<Self, Self::Rejection> {
+        let value = Extractor::from_request(req, state)
             .await
             .map_err(WithValidationRejection::ExtractionError)?;
         let ctx = FromRef::from_ref(state);
@@ -62,12 +64,12 @@ where
     }
 }
 
-impl<E: IntoInner> Debug for WithValidation<E>
+impl<Extractor> Debug for WithValidation<Extractor>
 where
-    <E as IntoInner>::Inner: Debug,
+    Extractor: IntoInner + Debug,
+    Extractor::Inner: Debug,
 {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        use std::ops::Deref;
-        Debug::fmt(&self.0.deref(), f)
+        f.debug_tuple("WithValidation").field(&self.0).finish()
     }
 }
