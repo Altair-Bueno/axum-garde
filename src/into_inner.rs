@@ -1,9 +1,7 @@
-use axum::extract::*;
-
 /// Trait for unwrapping extractor's payloads
 ///
 /// Types that extract data from request should implement this trait, as it
-/// unlocks extractor composition with third party crates
+/// unlocks extractor composition with this library
 pub trait IntoInner {
     /// Wrapped payload type
     type Inner;
@@ -11,9 +9,12 @@ pub trait IntoInner {
     fn into_inner(self) -> Self::Inner;
 }
 
-macro_rules! gen_impl {
-    ($name:ident) => {
-        impl<T> IntoInner for $name<T> {
+macro_rules! impl_into_inner_simple {
+    (
+        $name:ty,
+        [$($type_var:ident),* $(,)?]
+    ) => {
+        impl<$($type_var),*> IntoInner for $name {
             type Inner = T;
             fn into_inner(self) -> Self::Inner {
                 self.0
@@ -22,10 +23,19 @@ macro_rules! gen_impl {
     };
 }
 
+// Axum
 #[cfg(feature = "json")]
-gen_impl!(Json);
-#[cfg(feature = "query")]
-gen_impl!(Query);
+impl_into_inner_simple!(axum::extract::Json<T>, [T]);
+impl_into_inner_simple!(axum::extract::Extension<T>, [T]);
 #[cfg(feature = "form")]
-gen_impl!(Form);
-gen_impl!(Path);
+impl_into_inner_simple!(axum::extract::Form<T>, [T]);
+impl_into_inner_simple!(axum::extract::Path<T>, [T]);
+#[cfg(feature = "query")]
+impl_into_inner_simple!(axum::extract::Query<T>, [T]);
+impl_into_inner_simple!(axum::extract::State<T>, [T]);
+
+// Axum extra
+#[cfg(feature = "extra-protobuf")]
+impl_into_inner_simple!(axum_extra::protobuf::Protobuf<T>, [T]);
+#[cfg(feature = "extra-query")]
+impl_into_inner_simple!(axum_extra::extract::Query<T>, [T]);
