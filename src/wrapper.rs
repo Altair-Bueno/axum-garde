@@ -1,13 +1,15 @@
 use axum::extract::*;
 
-pub trait Unwrapable<T> {
-    fn extract(self) -> T;
+pub trait IntoInner {
+    type Inner;
+    fn into_inner(self) -> Self::Inner;
 }
 
 macro_rules! gen_impl {
     ($name:ident) => {
-        impl<T> Unwrapable<T> for $name<T> {
-            fn extract(self) -> T {
+        impl<T> IntoInner for $name<T> {
+            type Inner = T;
+            fn into_inner(self) -> Self::Inner {
                 self.0
             }
         }

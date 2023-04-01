@@ -21,7 +21,7 @@ struct Person {
 
 async fn insert_valid_person(
     // Perform validation on the request payload
-    WithValidation(person, _): WithValidation<Person, Json<Person>>,
+    WithValidation(person): WithValidation<Json<Person>>,
 ) -> impl IntoResponse {
     println!("Inserted person on database: {person:?}");
     Json(person.into_inner())

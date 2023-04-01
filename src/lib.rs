@@ -39,9 +39,9 @@
 #![forbid(unsafe_code)]
 
 mod error;
-mod unwrapable;
 mod with_validation;
+mod wrapper;
 
 pub use error::WithValidationRejection;
-pub use unwrapable::Unwrapable;
 pub use with_validation::WithValidation;
+pub use wrapper::IntoInner;
