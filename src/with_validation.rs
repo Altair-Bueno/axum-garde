@@ -1,4 +1,5 @@
 use std::fmt::Debug;
+use std::ops::Deref;
 
 use super::IntoInner;
 use super::WithValidationRejection;
@@ -71,5 +72,33 @@ where
 {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_tuple("WithValidation").field(&self.0).finish()
+    }
+}
+
+impl<Extractor> Clone for WithValidation<Extractor>
+where
+    Extractor: IntoInner + Clone,
+    Extractor::Inner: Clone,
+{
+    fn clone(&self) -> Self {
+        Self(self.0.clone())
+    }
+}
+
+impl<Extractor> Copy for WithValidation<Extractor>
+where
+    Extractor: IntoInner + Copy,
+    Extractor::Inner: Copy,
+{
+}
+
+impl<Extractor> Deref for WithValidation<Extractor>
+where
+    Extractor: IntoInner,
+{
+    type Target = Valid<Extractor::Inner>;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
     }
 }
