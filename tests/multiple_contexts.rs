@@ -70,7 +70,7 @@ async fn assert_that_state_can_contain_multiple_contexts(
     test_server: TestServer,
 ) {
     // Perform the request
-    // Although the time system has verified that multiple contexts can coexist,
+    // Although the type system has verified that multiple contexts can coexist,
     // we perform the request to verify no runtime errors (eg panics) happens
     test_server
         .post(path)
