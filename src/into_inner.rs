@@ -49,3 +49,5 @@ impl_into_inner_simple!(axum_extra::extract::Query<T>, [T]);
 impl_into_inner_simple!(axum_yaml::Yaml<T>, [T]);
 #[cfg(feature = "axum-msgpack")]
 impl_into_inner_simple!(axum_msgpack::MsgPack<T>, [T]);
+#[cfg(feature = "axum-msgpack")]
+impl_into_inner_simple!(axum_msgpack::MsgPackRaw<T>, [T]);
