@@ -35,7 +35,17 @@ impl_into_inner_simple!(axum::extract::Query<T>, [T]);
 impl_into_inner_simple!(axum::extract::State<T>, [T]);
 
 // Axum extra
-#[cfg(feature = "extra-protobuf")]
+#[cfg(feature = "axum-extra")]
+impl_into_inner_simple!(axum_extra::extract::WithRejection<T,E>, [T,E]);
+#[cfg(feature = "axum-extra")]
+impl_into_inner_simple!(axum_extra::extract::Cached<T>, [T]);
+#[cfg(feature = "axum-extra-protobuf")]
 impl_into_inner_simple!(axum_extra::protobuf::Protobuf<T>, [T]);
-#[cfg(feature = "extra-query")]
+#[cfg(feature = "axum-extra-query")]
 impl_into_inner_simple!(axum_extra::extract::Query<T>, [T]);
+
+// Other
+#[cfg(feature = "axum-yaml")]
+impl_into_inner_simple!(axum_yaml::Yaml<T>, [T]);
+#[cfg(feature = "axum-msgpack")]
+impl_into_inner_simple!(axum_msgpack::MsgPack<T>, [T]);

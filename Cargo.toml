@@ -9,9 +9,12 @@ edition = "2021"
 all-features = true
 
 [workspace.dependencies]
-garde = "0.9.1"
+garde = { git = "https://github.com/jprochazk/garde" }
 axum = "0.6"
+# Optional dependencies
 axum-extra = "0.7.2"
+axum-yaml = "0.3.0"
+axum-msgpack = "0.3.0"
 thiserror = "1.0.40"
 
 # Dev dependencies
@@ -23,18 +26,19 @@ axum-test = "7.2.0"
 serde_json = "1.0.95"
 
 [features]
-default = ["json", "query", "form"]
 # Axum
 json = ["axum/json"]
 query = ["axum/query"]
 form = ["axum/form"]
 # Axum extra
-extra-protobuf = ["axum-extra/protobuf"]
-extra-query = ["axum-extra/query"]
+axum-extra-protobuf = ["axum-extra/protobuf"]
+axum-extra-query = ["axum-extra/query"]
 
 [dependencies]
 axum = { workspace = true, default-features = false }
 axum-extra = { workspace = true, default-features = false, optional = true }
+axum-yaml = { workspace = true, default-features = false, optional = true }
+axum-msgpack = { workspace = true, default-features = false, optional = true }
 garde = { workspace = true, default-features = false }
 thiserror = { workspace = true, default-features = false }
 
