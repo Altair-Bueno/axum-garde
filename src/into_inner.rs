@@ -23,6 +23,24 @@ macro_rules! impl_into_inner_simple {
     };
 }
 
+macro_rules! impl_into_inner_wrapper {
+    (
+        $name:ty,
+        $inner_type_var:ident,
+        [$($type_var:ident),* $(,)?]
+    ) => {
+        impl<$inner_type_var, $($type_var),*> IntoInner for $name
+        where
+            $inner_type_var: IntoInner,
+        {
+            type Inner = <$inner_type_var as IntoInner>::Inner;
+            fn into_inner(self) -> Self::Inner {
+                self.0.into_inner()
+            }
+        }
+    };
+}
+
 // Axum
 #[cfg(feature = "json")]
 impl_into_inner_simple!(axum::extract::Json<T>, [T]);
@@ -36,9 +54,9 @@ impl_into_inner_simple!(axum::extract::State<T>, [T]);
 
 // Axum extra
 #[cfg(feature = "axum-extra")]
-impl_into_inner_simple!(axum_extra::extract::WithRejection<T,E>, [T,E]);
+impl_into_inner_wrapper!(axum_extra::extract::WithRejection<E, T>, E, [T]);
 #[cfg(feature = "axum-extra")]
-impl_into_inner_simple!(axum_extra::extract::Cached<T>, [T]);
+impl_into_inner_wrapper!(axum_extra::extract::Cached<T>, T, []);
 #[cfg(feature = "axum-extra-protobuf")]
 impl_into_inner_simple!(axum_extra::protobuf::Protobuf<T>, [T]);
 #[cfg(feature = "axum-extra-query")]
