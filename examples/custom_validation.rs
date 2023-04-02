@@ -3,7 +3,7 @@
 //! Run the example using
 //!
 //! ```sh
-//! cargo run --example custom_validation
+//! cargo run --example custom_validation --features=json
 //! ```
 use axum::{response::IntoResponse, routing::post, Json, Router, Server};
 use axum_garde::WithValidation;
