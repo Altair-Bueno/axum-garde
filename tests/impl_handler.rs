@@ -59,7 +59,7 @@ gen_assert_impl!(assert_form_impl_handler, axum::extract::Form<Person>);
 gen_assert_impl!(assert_path_impl_handler, axum::extract::Path<PathTuple>);
 #[cfg(feature = "query")]
 gen_assert_impl!(assert_query_impl_handler, axum::extract::Query<Person>);
-//gen_assert_impl!(assert_state_impl_handler, axum::extract::State<()>);
+gen_assert_impl!(assert_state_impl_handler, axum::extract::State<()>);
 
 // Axum extra
 #[cfg(feature = "axum-extra-query")]
