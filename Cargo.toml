@@ -24,6 +24,7 @@ rstest = "0.17.0"
 speculoos = "0.11.0"
 axum-test = "7.2.0"
 serde_json = "1.0.95"
+prost = "0.11.8"
 
 [features]
 # Axum
@@ -47,6 +48,7 @@ serde = { workspace = true, features = ["derive"] }
 garde = { workspace = true, features = ["default", "derive"] }
 axum = { workspace = true, features = ["default", "macros"] }
 tokio = { workspace = true, features = ["full"] }
+prost = { workspace = true }
 rstest = { workspace = true }
 axum-test = { workspace = true }
 serde_json = { workspace = true }
