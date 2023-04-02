@@ -27,33 +27,34 @@ use garde::Validate;
 /// The desired validation context ([`garde::Validate::Context`](garde::Validate))
 /// must be provided as router state
 ///
-/// ### Example
-///
-/// ```
-/// use axum::Json;
-/// use serde::{Serialize,Deserialize};
-/// use garde::Validate;
-/// use axum_garde::WithValidation;
-///
-/// #[derive(Debug, Serialize, Deserialize, Validate)]
-/// struct Person {
-///     #[garde(length(min = 1, max = 10))]
-///     name: String
-/// }
-///
-/// async fn handler(
-///     WithValidation(valid_person): WithValidation<Json<Person>>,
-/// ) -> String{
-///     format!("{valid_person:?}")
-/// }
-///
-/// # // Assert that handler compiles
-/// # axum::Router::<_, axum::body::BoxBody>::new()
-/// #   .route("/", axum::routing::post(handler))
-/// #   .with_state(())
-/// #   .into_make_service();
-/// ```
-///
+#[cfg_attr(
+    feature = "json",
+    doc = r#"
+### Example
+
+```
+use axum::Json;
+use serde::{Serialize,Deserialize};
+use garde::Validate;
+use axum_garde::WithValidation;
+#[derive(Debug, Serialize, Deserialize, Validate)]
+struct Person {
+    #[garde(length(min = 1, max = 10))]
+    name: String
+}
+async fn handler(
+    WithValidation(valid_person): WithValidation<Json<Person>>,
+) -> String{
+    format!("{valid_person:?}")
+}
+# // Assert that handler compiles
+# axum::Router::<_, axum::body::BoxBody>::new()
+#   .route("/", axum::routing::post(handler))
+#   .with_state(())
+#   .into_make_service();
+```
+"#
+)]
 /// [`FromRequestParts`]: axum::extract::FromRequestParts
 /// [`FromRequest`]: axum::extract::FromRequest
 /// [`IntoInner`]: crate::IntoInner
