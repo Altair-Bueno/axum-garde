@@ -1,3 +1,5 @@
+#![cfg(feature = "json")]
+
 use axum::debug_handler;
 use axum::http::StatusCode;
 use axum::response::IntoResponse;
@@ -58,7 +60,10 @@ fn test_server(router: IntoMakeService<Router>) -> TestServer {
 #[case::hello(Person { name: "hello".into() })]
 #[case::world(Person { name: "World".into() })]
 #[tokio::test]
-async fn assert_that_requests_are_transparent(test_server: TestServer, #[case] payload: Person) {
+async fn assert_that_valid_requests_are_transparent(
+    test_server: TestServer,
+    #[case] payload: Person,
+) {
     let expected = test_server.post("/echo_person").json(&payload).await;
     let obtained = test_server.post("valid_echo_person").json(&payload).await;
 
@@ -71,7 +76,7 @@ async fn assert_that_requests_are_transparent(test_server: TestServer, #[case] p
 
 #[rstest]
 #[case::not_a_person(StatusCode::UNPROCESSABLE_ENTITY, json!({"not": "a person"}))]
-#[case::long_name(StatusCode::UNPROCESSABLE_ENTITY, json!({"name": "to long to be valid......."}))]
+#[case::long_name(StatusCode::UNPROCESSABLE_ENTITY, json!({"name": "too long to be valid......."}))]
 #[case::short_name(StatusCode::UNPROCESSABLE_ENTITY, json!({"name": ""}))]
 #[tokio::test]
 async fn assert_that_invalid_requests_are_sucessfully_rejected(

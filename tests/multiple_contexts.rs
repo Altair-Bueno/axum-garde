@@ -1,3 +1,5 @@
+#![cfg(feature = "json")]
+
 use axum::extract::FromRef;
 use axum::http::StatusCode;
 use axum::routing::post;
